@@ -22,6 +22,8 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          dark: "hsl(var(--primary-dark))",
+          light: "hsl(var(--primary-light))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -47,16 +49,17 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
-        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'Noto Sans Bengali', 'system-ui', 'sans-serif'],
+        bengali: ['Noto Sans Bengali', 'sans-serif'],
+      },
+      boxShadow: {
+        'sm': '0 2px 4px hsl(240 10% 10% / 0.05)',
+        'DEFAULT': '0 4px 12px hsl(240 10% 10% / 0.08)',
+        'md': '0 4px 12px hsl(240 10% 10% / 0.08)',
+        'lg': '0 10px 30px hsl(240 10% 10% / 0.12)',
+        'xl': '0 20px 50px hsl(240 10% 10% / 0.15)',
       },
       borderRadius: {
         lg: "var(--radius)",
