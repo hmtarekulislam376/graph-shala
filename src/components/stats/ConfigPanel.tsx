@@ -8,6 +8,7 @@ interface ConfigPanelProps {
   onClassIntervalChange: (value: number) => void;
   graphType: GraphType;
   onGraphTypeChange: (value: GraphType) => void;
+  showClassInterval?: boolean;
 }
 
 const ConfigPanel = ({
@@ -15,6 +16,7 @@ const ConfigPanel = ({
   onClassIntervalChange,
   graphType,
   onGraphTypeChange,
+  showClassInterval = true,
 }: ConfigPanelProps) => {
   return (
     <div className="input-section h-full">
@@ -29,31 +31,33 @@ const ConfigPanel = ({
       </div>
 
       <div className="space-y-6">
-        {/* Class Interval */}
-        <div>
-          <Label className="text-sm font-semibold mb-3 block">
-            Class Interval
-            <span className="font-bengali text-xs ml-2 text-muted-foreground">(শ্রেণী ব্যবধান)</span>
-          </Label>
-          <Select
-            value={classInterval.toString()}
-            onValueChange={(val) => onClassIntervalChange(Number(val))}
-          >
-            <SelectTrigger className="w-full border-2 focus:border-primary transition-colors">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="3">3</SelectItem>
-              <SelectItem value="5">5</SelectItem>
-              <SelectItem value="8">8</SelectItem>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="15">15</SelectItem>
-            </SelectContent>
-          </Select>
-          <p className="text-xs text-muted-foreground mt-2">
-            Controls the width of each class interval in the distribution
-          </p>
-        </div>
+        {/* Class Interval - Only show for raw data mode */}
+        {showClassInterval && (
+          <div>
+            <Label className="text-sm font-semibold mb-3 block">
+              Class Interval
+              <span className="font-bengali text-xs ml-2 text-muted-foreground">(শ্রেণী ব্যবধান)</span>
+            </Label>
+            <Select
+              value={classInterval.toString()}
+              onValueChange={(val) => onClassIntervalChange(Number(val))}
+            >
+              <SelectTrigger className="w-full border-2 focus:border-primary transition-colors">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="3">3</SelectItem>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="8">8</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="15">15</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground mt-2">
+              Controls the width of each class interval in the distribution
+            </p>
+          </div>
+        )}
 
         {/* Graph Type */}
         <div>

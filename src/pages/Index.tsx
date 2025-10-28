@@ -5,31 +5,49 @@ import ConfigPanel from '@/components/stats/ConfigPanel';
 import GraphDisplay from '@/components/stats/GraphDisplay';
 import StatsPanel from '@/components/stats/StatsPanel';
 import FrequencyTable from '@/components/stats/FrequencyTable';
-import { calculateStatistics, createFrequencyDistribution } from '@/lib/statistics';
-import type { GraphType } from '@/types/stats';
+import { calculateStatistics, calculateGroupedStatistics, createFrequencyDistribution, parseGroupedFrequencyData } from '@/lib/statistics';
+import type { GraphType, InputMode } from '@/types/stats';
 
 const Index = () => {
   const [inputData, setInputData] = useState<string>('');
+  const [inputMode, setInputMode] = useState<InputMode>('raw-data');
   const [classInterval, setClassInterval] = useState<number>(5);
   const [graphType, setGraphType] = useState<GraphType>('frequency-polygon');
 
   const numbers = useMemo(() => {
+    if (inputMode === 'grouped-frequency') return [];
     const cleaned = inputData
       .split(/[,\s\n]+/)
       .map(n => parseFloat(n.trim()))
       .filter(n => !isNaN(n) && isFinite(n));
     return cleaned;
-  }, [inputData]);
-
-  const statistics = useMemo(() => {
-    if (numbers.length === 0) return null;
-    return calculateStatistics(numbers);
-  }, [numbers]);
+  }, [inputData, inputMode]);
 
   const frequencyData = useMemo(() => {
-    if (numbers.length === 0) return null;
-    return createFrequencyDistribution(numbers, classInterval);
-  }, [numbers, classInterval]);
+    if (inputMode === 'grouped-frequency') {
+      return parseGroupedFrequencyData(inputData);
+    } else {
+      if (numbers.length === 0) return null;
+      return createFrequencyDistribution(numbers, classInterval);
+    }
+  }, [inputData, inputMode, numbers, classInterval]);
+
+  const statistics = useMemo(() => {
+    if (!frequencyData) return null;
+    if (inputMode === 'grouped-frequency') {
+      return calculateGroupedStatistics(frequencyData);
+    } else {
+      if (numbers.length === 0) return null;
+      return calculateStatistics(numbers);
+    }
+  }, [frequencyData, inputMode, numbers]);
+
+  const dataCount = useMemo(() => {
+    if (inputMode === 'grouped-frequency') {
+      return frequencyData?.totalFrequency || 0;
+    }
+    return numbers.length;
+  }, [inputMode, frequencyData, numbers]);
 
   return (
     <div className="min-h-screen">
@@ -59,7 +77,13 @@ const Index = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Data Input Section */}
           <div className="lg:col-span-2 animate-slide-up">
-            <DataInput value={inputData} onChange={setInputData} count={numbers.length} />
+            <DataInput 
+              value={inputData} 
+              onChange={setInputData} 
+              count={dataCount}
+              mode={inputMode}
+              onModeChange={setInputMode}
+            />
           </div>
 
           {/* Configuration Panel */}
@@ -69,12 +93,13 @@ const Index = () => {
               onClassIntervalChange={setClassInterval}
               graphType={graphType}
               onGraphTypeChange={setGraphType}
+              showClassInterval={inputMode === 'raw-data'}
             />
           </div>
         </div>
 
         {/* Results Section */}
-        {numbers.length > 0 && (
+        {(numbers.length > 0 || frequencyData) && (
           <>
             {/* Statistics Cards */}
             <div className="mb-8 animate-scale-in">
@@ -98,7 +123,7 @@ const Index = () => {
         )}
 
         {/* Empty State */}
-        {numbers.length === 0 && (
+        {numbers.length === 0 && !frequencyData && (
           <div className="graph-container text-center py-20 animate-fade-in">
             <div className="max-w-md mx-auto">
               <div className="bg-gradient-to-br from-primary/10 to-accent/10 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">

@@ -1,3 +1,5 @@
+export type InputMode = 'raw-data' | 'grouped-frequency';
+
 export type GraphType = 
   | 'frequency-polygon' 
   | 'histogram' 
